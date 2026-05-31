@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VA Academy — Your Virtual Assistant Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f2eb;--surface:#fff;--surface2:#f0ece2;--border:#e2ddd2;
+  --text:#1a1814;--muted:#8a8478;--soft:#c5c0b4;
+  --green:#2d6a4f;--green-light:#d8f3dc;--green-mid:#52b788;
+  --amber:#b5451b;--amber-light:#fde8d8;
+  --blue:#1a4e8a;--blue-light:#dbeafe;
+  --purple:#5b2d8a;--purple-light:#ede9fe;
+  --red:#9b1d1d;--red-light:#fee2e2;
+  --r:14px;--r-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Cabinet Grotesk',sans-serif;font-size:15px;line-height:1.6}
+h1,h2,h3,h4,.display{font-family:'Clash Display',sans-serif}
+
+/* SIDEBAR */
+.layout{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--text);flex-shrink:0;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;z-index:200;transition:transform .3s}
+.sidebar-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.logo-text{font-family:'Clash Display',sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:-.5px}
+.logo-text span{color:#a8ff78}
+.logo-sub{font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;letter-spacing:.04em;text-transform:uppercase}
+.nav-section{padding:16px 12px 8px}
+.nav-section-label{font-size:10px;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:.08em;padding:0 8px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r-sm);color:rgba(255,255,255,0.55);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.9)}
+.nav-item.active{background:rgba(168,255,120,0.12);color:#a8ff78}
+.nav-icon{width:18px;height:18px;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon{opacity:1}
+.sidebar-progress{margin:auto 0 0;padding:16px;border-top:1px solid rgba(255,255,255,0.08)}
+.sp-label{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.sp-bar{height:4px;background:rgba(255,255,255,0.1);border-radius:20px;overflow:hidden;margin-bottom:6px}
+.sp-fill{height:100%;background:#a8ff78;border-radius:20px;transition:width .5s}
+.sp-text{font-size:12px;color:rgba(255,255,255,0.45)}
+
+/* MAIN */
+.main{margin-left:240px;flex:1;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-title{font-family:'Clash Display',sans-serif;font-size:18px;font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.streak-badge{background:var(--text);color:#a8ff78;font-family:'Clash Display',sans-serif;font-size:13px;font-weight:600;padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:5px}
+.content{padding:28px}
+
+/* PAGES */
+.page{display:none}
+.page.active{display:block}
+
+/* DASHBOARD */
+.dash-hero{background:var(--text);border-radius:var(--r);padding:28px 28px 24px;margin-bottom:20px;position:relative;overflow:hidden}
+.dash-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(168,255,120,0.06);border-radius:50%}
+.dash-hero::after{content:'';position:absolute;bottom:-60px;right:60px;width:140px;height:140px;background:rgba(120,200,255,0.05);border-radius:50%}
+.hero-greeting{font-family:'Clash Display',sans-serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:4px;position:relative}
+.hero-sub{font-size:13px;color:rgba(255,255,255,0.45);position:relative}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.stat-val{font-family:'Clash Display',sans-serif;font-size:26px;font-weight:700}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px}
+.card-title{font-family:'Clash Display',sans-serif;font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.week-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.wbr-label{font-size:12px;color:var(--muted);width:56px;flex-shrink:0}
+.wbr-track{flex:1;height:6px;background:var(--surface2);border-radius:20px;overflow:hidden}
+.wbr-fill{height:100%;border-radius:20px;transition:width .4s}
+.wbr-count{font-size:11px;color:var(--muted);width:32px;text-align:right;flex-shrink:0}
+.today-list{display:flex;flex-direction:column;gap:0}
+.today-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.today-item:last-child{border-bottom:none}
+.ti-check{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--border);background:none;cursor:pointer;flex-shrink:0;margin-top:1px;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.ti-check.done{background:var(--green);border-color:var(--green)}
+.ti-info{flex:1}
+.ti-task{font-size:13px;line-height:1.4}
+.ti-task.done{text-decoration:line-through;color:var(--muted)}
+.ti-meta{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* SCHEDULE PAGE */
+.week-accordion{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.week-head{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;transition:background .15s}
+.week-head:hover{background:var(--surface2)}
+.wh-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Clash Display',sans-serif;font-size:13px;font-weight:700;flex-shrink:0}
+.wh-info{flex:1}
+.wh-title{font-family:'Clash Display',sans-serif;font-size:14px;font-weight:600}
+.wh-sub{font-size:12px;color:var(--muted);margin-top:1px}
+.wh-right{display:flex;align-items:center;gap:10px}
+.wh-pill{background:var(--surface2);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--muted)}
+.wh-chevron{color:var(--muted);font-size:12px;transition:transform .2s;font-weight:700}
+.wh-chevron.open{transform:rotate(180deg)}
+.week-body{border-top:1px solid var(--border);padding:0 20px 12px}
+.day-row{display:grid;grid-template-columns:60px 1fr auto auto;align-items:start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.day-row:last-child{border-bottom:none}
+.dr-day{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+.dr-task{font-size:13px;line-height:1.5}
+.dr-task.done{text-decoration:line-through;color:var(--muted)}
+.dr-time{font-size:11px;color:var(--muted);white-space:nowrap;padding-top:3px}
+.dr-check{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border);background:none;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.dr-check.done{background:var(--green);border-color:var(--green)}
+
+/* RESOURCES PAGE */
+.res-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.filter-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);font-family:'Cabinet Grotesk',sans-serif;font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s}
+.filter-btn:hover{border-color:var(--green);color:var(--green)}
+.filter-btn.active{background:var(--green);border-color:var(--green);color:#fff}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.res-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .2s,transform .15s}
+.res-card:hover{border-color:var(--soft);transform:translateY(-2px)}
+.res-thumb{height:130px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.res-thumb-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%}
+.yt-play{width:44px;height:44px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2)}
+.res-body{padding:14px 16px}
+.res-tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.res-title{font-family:'Clash Display',sans-serif;font-size:14px;font-weight:600;line-height:1.3;margin-bottom:6px}
+.res-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.res-actions{display:flex;gap:8px;align-items:center}
+.watch-btn{display:inline-flex;align-items:center;gap:6px;background:var(--text);color:#fff;font-family:'Cabinet Grotesk',sans-serif;font-size:12px;font-weight:500;padding:7px 14px;border-radius:var(--r-sm);text-decoration:none;transition:opacity .15s}
+.watch-btn:hover{opacity:.85}
+.done-toggle{background:none;border:1px solid var(--border);color:var(--muted);font-family:'Cabinet Grotesk',sans-serif;font-size:12px;padding:6px 12px;border-radius:var(--r-sm);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px}
+.done-toggle.watched{background:var(--green-light);border-color:var(--green);color:var(--green)}
+
+/* NOTES PAGE */
+.note-composer{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:20px}
+.note-composer textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 16px;font-family:'Cabinet Grotesk',sans-serif;font-size:14px;color:var(--text);resize:vertical;min-height:100px;outline:none;line-height:1.7}
+.note-composer textarea:focus{border-color:var(--green-mid)}
+.note-actions{display:flex;justify-content:flex-end;margin-top:10px}
+.btn-primary{background:var(--text);color:#fff;border:none;font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:500;padding:9px 20px;border-radius:var(--r-sm);cursor:pointer;transition:opacity .15s}
+.btn-primary:hover{opacity:.85}
+.saved-note-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:10px}
+.sn-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sn-date{font-size:11px;color:var(--muted)}
+.sn-del{background:none;border:none;color:var(--soft);font-size:12px;cursor:pointer;padding:2px 6px;border-radius:4px}
+.sn-del:hover{color:var(--red)}
+.sn-body{font-size:13px;line-height:1.6;white-space:pre-wrap}
+
+/* MOTIVATION PAGE */
+.quote-hero{background:var(--text);border-radius:var(--r);padding:32px;margin-bottom:20px;text-align:center;position:relative;overflow:hidden}
+.quote-hero::before{content:'"';font-family:'Clash Display',sans-serif;font-size:120px;color:rgba(168,255,120,0.07);position:absolute;top:-10px;left:20px;line-height:1}
+.q-text{font-family:'Clash Display',sans-serif;font-size:20px;font-weight:600;color:#fff;line-height:1.4;margin-bottom:10px;position:relative}
+.q-author{font-size:13px;color:rgba(255,255,255,0.4);position:relative}
+.q-btn{background:rgba(168,255,120,0.12);border:1px solid rgba(168,255,120,0.2);color:#a8ff78;font-family:'Cabinet Grotesk',sans-serif;font-size:13px;padding:8px 20px;border-radius:var(--r-sm);cursor:pointer;margin-top:16px;transition:background .2s;position:relative}
+.q-btn:hover{background:rgba(168,255,120,0.2)}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.tip-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.tip-icon{font-size:24px;margin-bottom:8px}
+.tip-title{font-family:'Clash Display',sans-serif;font-size:14px;font-weight:600;margin-bottom:6px}
+.tip-body{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* MISC */
+.section-title{font-family:'Clash Display',sans-serif;font-size:20px;font-weight:700;margin-bottom:4px}
+.section-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
+.checkmark-svg{width:12px;height:12px;stroke:#fff;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.progress-ring{display:inline-flex;align-items:center;justify-content:center}
+.confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+
+/* MOBILE */
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:5px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .hamburger{display:flex}
+  .sidebar-overlay.show{display:block}
+  .two-col{grid-template-columns:1fr}
+  .content{padding:16px}
+  .topbar{padding:12px 16px}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">VA<span>Academy</span></div>
+    <div class="logo-sub">Your learning hub</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Main</div>
+    <button class="nav-item active" onclick="goTo('dashboard',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </button>
+    <button class="nav-item" onclick="goTo('schedule',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      8-Week Schedule
+    </button>
+    <button class="nav-item" onclick="goTo('resources',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+      YouTube Resources
+    </button>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Tools</div>
+    <button class="nav-item" onclick="goTo('notes',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+      My Notes
+    </button>
+    <button class="nav-item" onclick="goTo('motivation',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Motivation
+    </button>
+  </div>
+
+  <div class="sidebar-progress">
+    <div class="sp-label">Overall progress</div>
+    <div class="sp-bar"><div class="sp-fill" id="sb-fill" style="width:0%"></div></div>
+    <div class="sp-text" id="sb-text">0 of 40 days done</div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hamburger" onclick="openSidebar()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div class="streak-badge" id="streak-badge">🔥 <span id="streak-val">0</span> day streak</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="dash-hero">
+        <div class="hero-greeting" id="hero-greeting">Welcome back!</div>
+        <div class="hero-sub">Keep going — every day counts on your VA journey</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Days done</div>
+          <div class="stat-val" id="ds-done" style="color:var(--green)">0</div>
+          <div class="stat-sub">out of 40</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Videos watched</div>
+          <div class="stat-val" id="ds-watched" style="color:var(--blue)">0</div>
+          <div class="stat-sub">out of 20</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Current week</div>
+          <div class="stat-val" id="ds-week" style="color:var(--amber)">1</div>
+          <div class="stat-sub">of 8 weeks</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">% Complete</div>
+          <div class="stat-val" id="ds-pct" style="color:var(--purple)">0%</div>
+          <div class="stat-sub">overall</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Week progress
+          </div>
+          <div id="dash-week-bars"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Today's tasks
+            <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:4px" id="today-wk-label"></span>
+          </div>
+          <div id="dash-today"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <div class="page" id="page-schedule">
+      <div class="section-title">8-Week Study Schedule</div>
+      <div class="section-sub">Tick off each day as you complete it. Your progress saves automatically.</div>
+      <div id="schedule-list"></div>
+      <div style="margin-top:16px;text-align:right">
+        <button onclick="resetProgress()" style="background:none;border:1px solid var(--border);color:var(--muted);font-family:'Cabinet Grotesk',sans-serif;font-size:12px;padding:7px 16px;border-radius:var(--r-sm);cursor:pointer">Reset all progress</button>
+      </div>
+    </div>
+
+    <!-- RESOURCES -->
+    <div class="page" id="page-resources">
+      <div class="section-title">YouTube Resources</div>
+      <div class="section-sub">All your learning videos in one place. Click Watch to open on YouTube, mark as watched when done.</div>
+      <div class="res-filter" id="res-filter"></div>
+      <div class="res-grid" id="res-grid"></div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="page" id="page-notes">
+      <div class="section-title">My Notes</div>
+      <div class="section-sub">Write reflections, questions, and ideas as you learn.</div>
+      <div class="note-composer">
+        <textarea id="note-input" placeholder="What did you learn today? Any questions? Ideas for your VA niche?"></textarea>
+        <div class="note-actions">
+          <button class="btn-primary" onclick="saveNote()">Save note</button>
+        </div>
+      </div>
+      <div id="notes-list"></div>
+    </div>
+
+    <!-- MOTIVATION -->
+    <div class="page" id="page-motivation">
+      <div class="section-title">Motivation</div>
+      <div class="section-sub">Come here whenever you need a boost to keep going.</div>
+      <div class="quote-hero">
+        <div class="q-text" id="q-text"></div>
+        <div class="q-author" id="q-author"></div>
+        <button class="q-btn" onclick="nextQuote()">Next quote →</button>
+      </div>
+      <div class="tips-grid" id="tips-grid"></div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<canvas class="confetti-canvas" id="confetti"></canvas>
+
+<script>
+const WEEKS=[
+  {title:"VA foundations",sub:"What VAs do & how to think like one",color:"#2d6a4f",light:"#d8f3dc",days:[
+    {day:"Mon",task:"Watch 'Become a VA in 2026' — note every service VAs offer",time:"1.5h"},
+    {day:"Tue",task:"Watch 'Freelancing & VA 101' — list 3 services you want to offer",time:"1h"},
+    {day:"Wed",task:"Watch 'Complete Guide to Becoming a VA' — research niche options",time:"1.5h"},
+    {day:"Thu",task:"Watch '10 Must-Have VA Skills' — honestly assess which you already have",time:"1h"},
+    {day:"Fri",task:"Write your VA mission: your niche, your top 3 services, your ideal client",time:"1h"},
+  ]},
+  {title:"Google Workspace pt.1",sub:"Gmail, Google Drive & Docs",color:"#1a6b8a",light:"#dbeafe",days:[
+    {day:"Mon",task:"Watch 'Google Workspace Full In-Depth Guide' — Gmail & Drive section",time:"1.5h"},
+    {day:"Tue",task:"Practice: organize a Gmail inbox with labels, filters & stars",time:"1h"},
+    {day:"Wed",task:"Continue course: Google Docs & Slides section",time:"1.5h"},
+    {day:"Thu",task:"Practice: write a sample client report in Google Docs",time:"1h"},
+    {day:"Fri",task:"Watch '4-Hour Google Workspace Course' — focus on collaboration",time:"2h"},
+  ]},
+  {title:"Google Workspace pt.2",sub:"Sheets, Calendar & Calendly",color:"#1a6b8a",light:"#dbeafe",days:[
+    {day:"Mon",task:"Watch Google Sheets section — focus on formulas and data tracking",time:"1.5h"},
+    {day:"Tue",task:"Practice: build a client task tracker in Google Sheets",time:"1h"},
+    {day:"Wed",task:"Watch 'Email Management for VA Beginners' — full walkthrough",time:"1h"},
+    {day:"Thu",task:"Watch 'How to Use Calendly 2025' — set up your own free account",time:"1h"},
+    {day:"Fri",task:"Practice: manage a mock client's calendar for a full week",time:"1.5h"},
+  ]},
+  {title:"Canva design",sub:"Create visuals clients will love",color:"#b5451b",light:"#fde8d8",days:[
+    {day:"Mon",task:"Watch 'Full Canva Tutorial 2025' — explore every menu and feature",time:"1.5h"},
+    {day:"Tue",task:"Practice: design a social media post + flyer for a mock client",time:"1h"},
+    {day:"Wed",task:"Watch 'Canva Step by Step 2025' — focus on templates & brand kits",time:"1.5h"},
+    {day:"Thu",task:"Practice: design a 3-page VA media kit using Canva",time:"1.5h"},
+    {day:"Fri",task:"Create 5 different social graphics — save them as your portfolio pieces",time:"1h"},
+  ]},
+  {title:"Project management",sub:"Trello, Asana, ClickUp & Notion",color:"#5b2d8a",light:"#ede9fe",days:[
+    {day:"Mon",task:"Watch 'How to Use Trello 2025' — create a sample client project board",time:"1.5h"},
+    {day:"Tue",task:"Watch 'How to Use Asana 2025' — set up a mock project with milestones",time:"1.5h"},
+    {day:"Wed",task:"Watch 'ClickUp Tutorial for Beginners' — explore views & automations",time:"1.5h"},
+    {day:"Thu",task:"Watch 'Notion Full Course 2025' — build a simple client workspace",time:"2h"},
+    {day:"Fri",task:"Write a comparison: which tool fits which type of client? Save as a doc.",time:"1h"},
+  ]},
+  {title:"Social media mgmt",sub:"Manage & grow clients' social presence",color:"#7c3d8a",light:"#f3e8fd",days:[
+    {day:"Mon",task:"Watch 'Free Social Media Management Full Course'",time:"2h"},
+    {day:"Tue",task:"Watch 'Social Media Marketing 2025 — Beginner to Advanced'",time:"2h"},
+    {day:"Wed",task:"Practice: create a 2-week content calendar for a mock brand in Notion",time:"1.5h"},
+    {day:"Thu",task:"Watch 'Social Media Marketing Full Course — Simplilearn'",time:"2h"},
+    {day:"Fri",task:"Practice: use Meta Business Suite (free) to schedule 5 sample posts",time:"1h"},
+  ]},
+  {title:"AI tools for VAs",sub:"Stay ahead with AI skills",color:"#8a5b1a",light:"#fef3c7",days:[
+    {day:"Mon",task:"Watch 'Skills to Learn for VAs to Master AI' — note tools to learn",time:"1h"},
+    {day:"Tue",task:"Practice: use Claude/ChatGPT to draft 3 different client emails",time:"1.5h"},
+    {day:"Wed",task:"Watch 'How to Succeed as a VA in 2025' — client management strategies",time:"1h"},
+    {day:"Thu",task:"Practice: use AI to build a full content plan for a mock client",time:"1.5h"},
+    {day:"Fri",task:"Write your 'AI tools I use' list — add it to your portfolio",time:"1h"},
+  ]},
+  {title:"Portfolio & launch",sub:"Get clients and start earning",color:"#1a5c8a",light:"#dbeafe",days:[
+    {day:"Mon",task:"Set up Fiverr or Upwork profile — write bio, add services & set rates",time:"2h"},
+    {day:"Tue",task:"Compile portfolio: pick your 5 best practice projects from all 7 weeks",time:"1.5h"},
+    {day:"Wed",task:"Write 3 proposal templates: admin VA, social media VA, general VA",time:"1.5h"},
+    {day:"Thu",task:"Join 2–3 VA communities on Facebook — introduce yourself",time:"1h"},
+    {day:"Fri",task:"Apply to 3 real gigs on Fiverr, Upwork, or LinkedIn. You are ready!",time:"1.5h"},
+  ]},
+];
+
+const RESOURCES=[
+  {id:"r1",cat:"foundations",title:"Become a Virtual Assistant in 2026",desc:"Step-by-step guide on how to start, stand out, and get hired as a VA.",url:"https://www.youtube.com/watch?v=wYFdl5fYk_4",color:"#2d6a4f",light:"#d8f3dc",week:1},
+  {id:"r2",cat:"foundations",title:"Freelancing & Virtual Assistant 101",desc:"The ultimate beginner's guide to freelancing and virtual assistance.",url:"https://www.youtube.com/watch?v=fPqifI5QxeU",color:"#2d6a4f",light:"#d8f3dc",week:1},
+  {id:"r3",cat:"foundations",title:"Complete Guide to Becoming a VA",desc:"Everything you need to start and level up your VA career.",url:"https://www.youtube.com/watch?v=v6HNHlFwOpo",color:"#2d6a4f",light:"#d8f3dc",week:1},
+  {id:"r4",cat:"foundations",title:"10 Must-Have VA Skills for 2025",desc:"Master these 10 skills and 2025 will be easy for your VA business.",url:"https://www.youtube.com/watch?v=twzxDoqgl_Y",color:"#2d6a4f",light:"#d8f3dc",week:1},
+  {id:"r5",cat:"google",title:"Google Workspace Full In-Depth Guide",desc:"Complete beginner tutorial covering Gmail, Drive, Docs, and Slides.",url:"https://www.youtube.com/watch?v=jOTQR6Hqjoo",color:"#1a6b8a",light:"#dbeafe",week:2},
+  {id:"r6",cat:"google",title:"Google Workspace Basics Full Course (4+ hrs)",desc:"Deep-dive course covering every Google Workspace app.",url:"https://www.youtube.com/watch?v=_oYMrYCs2fU",color:"#1a6b8a",light:"#dbeafe",week:2},
+  {id:"r7",cat:"google",title:"Google Workspace Beginners Guide — Expert Tips",desc:"Pro tips on getting started with Google Workspace the right way.",url:"https://www.youtube.com/watch?v=FwT6_JFAk5Y",color:"#1a6b8a",light:"#dbeafe",week:3},
+  {id:"r8",cat:"google",title:"Email Management Tips for VA Beginners",desc:"How to manage a client's inbox professionally and efficiently.",url:"https://www.youtube.com/watch?v=scY8sPVHq8I",color:"#1a6b8a",light:"#dbeafe",week:3},
+  {id:"r9",cat:"google",title:"How to Use Calendly 2025 — Complete Tutorial",desc:"Set up and master Calendly for scheduling client appointments.",url:"https://www.youtube.com/watch?v=TU_rFpx8fEQ",color:"#1a6b8a",light:"#dbeafe",week:3},
+  {id:"r10",cat:"canva",title:"Full Canva Tutorial 2025 — For Beginners",desc:"Learn every Canva feature step by step in this updated 2025 guide.",url:"https://www.youtube.com/watch?v=bFT2mSQ6HZc",color:"#b5451b",light:"#fde8d8",week:4},
+  {id:"r11",cat:"canva",title:"Canva Tutorial Step by Step 2025",desc:"Free and Pro Canva — templates, branding, and design workflows.",url:"https://www.youtube.com/watch?v=BLhoWAALKt0",color:"#b5451b",light:"#fde8d8",week:4},
+  {id:"r12",cat:"tools",title:"How to Use Trello 2025 — Full Tutorial",desc:"Create and manage boards, cards, and team projects in Trello.",url:"https://www.youtube.com/watch?v=IrXL2ANDr6U",color:"#5b2d8a",light:"#ede9fe",week:5},
+  {id:"r13",cat:"tools",title:"How to Use Asana 2025 — Beginners Tutorial",desc:"Set up projects, tasks, and workflows in Asana from scratch.",url:"https://www.youtube.com/watch?v=xlW3rnrOdgg",color:"#5b2d8a",light:"#ede9fe",week:5},
+  {id:"r14",cat:"tools",title:"ClickUp Tutorial for Beginners",desc:"Master ClickUp's views, automation, and project management features.",url:"https://www.youtube.com/watch?v=42XX14Rbi7M",color:"#5b2d8a",light:"#ede9fe",week:5},
+  {id:"r15",cat:"tools",title:"Notion Full Course for Beginners 2025",desc:"Build workspaces, databases, and dashboards in Notion.",url:"https://www.youtube.com/watch?v=kOf3QSBV29Y",color:"#5b2d8a",light:"#ede9fe",week:5},
+  {id:"r16",cat:"social",title:"Free Social Media Management Full Course",desc:"7 key facts and skills you need to work as a social media VA.",url:"https://www.youtube.com/watch?v=S7MU6B0FRG8",color:"#7c3d8a",light:"#f3e8fd",week:6},
+  {id:"r17",cat:"social",title:"Social Media Marketing 2025 — Beginner to Advanced",desc:"Everything you need to become a social media marketer or manager.",url:"https://www.youtube.com/watch?v=mZm8hksRaIA",color:"#7c3d8a",light:"#f3e8fd",week:6},
+  {id:"r18",cat:"social",title:"Social Media Marketing Full Course — Simplilearn",desc:"Professional social media marketing training from Simplilearn.",url:"https://www.youtube.com/watch?v=4AW7Sahwhmo",color:"#7c3d8a",light:"#f3e8fd",week:6},
+  {id:"r19",cat:"ai",title:"Skills for VAs to Master AI",desc:"How to use AI tools to stay competitive and work faster as a VA.",url:"https://www.youtube.com/watch?v=uM_lesdrWa0",color:"#8a5b1a",light:"#fef3c7",week:7},
+  {id:"r20",cat:"ai",title:"How to Succeed as a Virtual Assistant in 2025",desc:"Strategies for client management, growth, and VA business success.",url:"https://www.youtube.com/watch?v=tsThfUwqFmE",color:"#8a5b1a",light:"#fef3c7",week:7},
+];
+
+const CATS={all:"All",foundations:"Foundations",google:"Google Workspace",canva:"Canva",tools:"PM Tools",social:"Social Media",ai:"AI Tools"};
+
+const QUOTES=[
+  {text:"The secret of getting ahead is getting started.",author:"Mark Twain"},
+  {text:"You don't have to be great to start, but you have to start to be great.",author:"Zig Ziglar"},
+  {text:"Every expert was once a beginner. Every pro started where you are now.",author:"Robin Sharma"},
+  {text:"Small daily improvements over time lead to stunning results.",author:"Robin Sharma"},
+  {text:"Discipline is the bridge between goals and accomplishments.",author:"Jim Rohn"},
+  {text:"Success is the sum of small efforts repeated day in and day out.",author:"Robert Collier"},
+  {text:"A year from now you'll wish you had started today.",author:"Karen Lamb"},
+  {text:"The difference between who you are and who you want to be is what you do.",author:"Unknown"},
+  {text:"Don't watch the clock — do what it does. Keep going.",author:"Sam Levenson"},
+  {text:"Your only competition is who you were yesterday.",author:"Unknown"},
+];
+
+const TIPS=[
+  {icon:"⏰",title:"Same time every day",body:"Study at a fixed time daily. Consistency builds momentum and turns learning into a habit."},
+  {icon:"📵",title:"No distractions",body:"Put your phone on silent during study sessions. One focused hour beats three distracted ones."},
+  {icon:"✍️",title:"Take notes",body:"Write down tools, tips, and workflows as you watch. Your notes become your reference guide."},
+  {icon:"💪",title:"Practice every day",body:"After every tutorial, spend 20 minutes applying what you learned. Doing beats watching."},
+  {icon:"🎯",title:"One skill at a time",body:"Don't jump ahead. Mastering each week fully is better than rushing through all 8."},
+  {icon:"📁",title:"Build as you go",body:"Save every practice project. By week 8 you'll have a portfolio without any extra effort."},
+  {icon:"🌐",title:"Join VA communities",body:"Facebook and WhatsApp VA groups are goldmines for tips, clients, and mentorship."},
+  {icon:"🙋",title:"Ask for feedback",body:"Share your practice work online. Constructive feedback from other VAs accelerates growth."},
+];
+
+let state={checked:{},watched:{},notes:[],streak:0,lastActive:null};
+let quoteIdx=0;
+let activeFilter='all';
+
+function load(){try{const s=localStorage.getItem('va_academy_v2');if(s)state=JSON.parse(s);}catch(e){}}
+function save(){try{localStorage.setItem('va_academy_v2',JSON.stringify(state));}catch(e){}}
+
+function doneCount(){return Object.values(state.checked).filter(Boolean).length;}
+function watchedCount(){return Object.values(state.watched).filter(Boolean).length;}
+function totalDays(){return WEEKS.reduce((a,w)=>a+w.days.length,0);}
+
+function updateSidebar(){
+  const d=doneCount(),t=totalDays(),pct=Math.round(d/t*100);
+  document.getElementById('sb-fill').style.width=pct+'%';
+  document.getElementById('sb-text').textContent=d+' of '+t+' days done';
+  document.getElementById('streak-val').textContent=state.streak||0;
+}
+
+function updateDashboard(){
+  const done=doneCount(),watched=watchedCount(),pct=Math.round(done/totalDays()*100);
+  const curWeek=Math.min(8,Math.floor(done/5)+1);
+  const hr=new Date().getHours();
+  const greet=hr<12?'Good morning ☀️':hr<17?'Good afternoon 🌤️':'Good evening 🌙';
+  document.getElementById('hero-greeting').textContent=greet+' — keep pushing!';
+  document.getElementById('ds-done').textContent=done;
+  document.getElementById('ds-watched').textContent=watched;
+  document.getElementById('ds-week').textContent=curWeek;
+  document.getElementById('ds-pct').textContent=pct+'%';
+
+  const wbars=document.getElementById('dash-week-bars');
+  wbars.innerHTML='';
+  WEEKS.forEach((w,wi)=>{
+    const wd=w.days.filter((_,di)=>state.checked[wi+'-'+di]).length;
+    const wp=Math.round(wd/w.days.length*100);
+    wbars.innerHTML+=`<div class="week-bar-row">
+      <div class="wbr-label" style="font-size:11px">Wk ${wi+1}</div>
+      <div class="wbr-track"><div class="wbr-fill" style="width:${wp}%;background:${w.color}"></div></div>
+      <div class="wbr-count">${wd}/${w.days.length}</div>
+    </div>`;
+  });
+
+  const activeWeekIdx=Math.min(7,Math.floor(done/5));
+  const aw=WEEKS[activeWeekIdx];
+  document.getElementById('today-wk-label').textContent='Week '+(activeWeekIdx+1);
+  const tl=document.getElementById('dash-today');
+  tl.innerHTML='';
+  if(done>=40){
+    tl.innerHTML='<div class="empty-state">🎉 You completed all 8 weeks! You are a VA!</div>';return;
+  }
+  aw.days.forEach((d,di)=>{
+    const isDone=!!state.checked[activeWeekIdx+'-'+di];
+    tl.innerHTML+=`<div class="today-item">
+      <button class="ti-check ${isDone?'done':''}" onclick="toggleDay(${activeWeekIdx},${di})">
+        ${isDone?'<svg class="checkmark-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>':''}
+      </button>
+      <div class="ti-info">
+        <div class="ti-task ${isDone?'done':''}">${d.task}</div>
+        <div class="ti-meta">${d.day} · ${d.time}</div>
+      </div>
+    </div>`;
+  });
+}
+
+function renderSchedule(){
+  const list=document.getElementById('schedule-list');
+  list.innerHTML='';
+  WEEKS.forEach((w,wi)=>{
+    const wd=w.days.filter((_,di)=>state.checked[wi+'-'+di]).length;
+    const div=document.createElement('div');div.className='week-accordion';
+    div.innerHTML=`<div class="week-head" onclick="toggleAccordion(this)">
+      <div class="wh-num" style="background:${w.light};color:${w.color}">W${wi+1}</div>
+      <div class="wh-info">
+        <div class="wh-title">${w.title}</div>
+        <div class="wh-sub">${w.sub}</div>
+      </div>
+      <div class="wh-right">
+        <span class="wh-pill">${wd}/${w.days.length}</span>
+        <span class="wh-chevron ${wi===0?'open':''}">▾</span>
+      </div>
+    </div>
+    <div class="week-body" style="display:${wi===0?'block':'none'}">
+      ${w.days.map((d,di)=>{
+        const done=!!state.checked[wi+'-'+di];
+        return`<div class="day-row">
+          <span class="dr-day">${d.day}</span>
+          <span class="dr-task ${done?'done':''}">${d.task}</span>
+          <span class="dr-time">${d.time}</span>
+          <button class="dr-check ${done?'done':''}" onclick="toggleDay(${wi},${di})">
+            ${done?'<svg class="checkmark-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>':''}
+          </button>
+        </div>`;
+      }).join('')}
+    </div>`;
+    list.appendChild(div);
+  });
+}
+
+function toggleAccordion(hd){
+  const bd=hd.nextElementSibling;
+  const ch=hd.querySelector('.wh-chevron');
+  const open=bd.style.display!=='none';
+  bd.style.display=open?'none':'block';
+  ch.classList.toggle('open',!open);
+}
+
+function toggleDay(wi,di){
+  const key=wi+'-'+di;
+  const wasDone=!!state.checked[key];
+  state.checked[key]=!wasDone;
+  if(!wasDone){
+    updateStreak();
+    if(doneCount()%5===0)launchConfetti();
+  }
+  save();
+  const onSched=document.getElementById('page-schedule').classList.contains('active');
+  if(onSched)renderSchedule();
+  updateDashboard();
+  updateSidebar();
+}
+
+function updateStreak(){
+  const today=new Date().toDateString();
+  const yesterday=new Date(Date.now()-86400000).toDateString();
+  if(state.lastActive===today){state.streak=state.streak||1;}
+  else if(state.lastActive===yesterday){state.streak=(state.streak||0)+1;}
+  else{state.streak=1;}
+  state.lastActive=today;
+}
+
+function renderResources(){
+  const filterDiv=document.getElementById('res-filter');
+  if(!filterDiv.hasChildNodes()){
+    Object.entries(CATS).forEach(([k,v])=>{
+      const b=document.createElement('button');
+      b.className='filter-btn'+(k==='all'?' active':'');
+      b.textContent=v;
+      b.onclick=()=>{
+        activeFilter=k;
+        document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        renderResources();
+      };
+      filterDiv.appendChild(b);
+    });
+  }
+  const grid=document.getElementById('res-grid');
+  grid.innerHTML='';
+  const filtered=activeFilter==='all'?RESOURCES:RESOURCES.filter(r=>r.cat===activeFilter);
+  filtered.forEach(r=>{
+    const watched=!!state.watched[r.id];
+    const card=document.createElement('div');card.className='res-card';
+    card.innerHTML=`
+      <div class="res-thumb" style="background:${r.light}">
+        <div class="res-thumb-inner">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:${r.color};margin-bottom:10px">Week ${r.week}</div>
+          <div class="yt-play" style="background:${r.color}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="res-body">
+        <div class="res-tag" style="background:${r.light};color:${r.color}">${CATS[r.cat]}</div>
+        <div class="res-title">${r.title}</div>
+        <div class="res-desc">${r.desc}</div>
+        <div class="res-actions">
+          <a class="watch-btn" href="${r.url}" target="_blank" rel="noopener">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Watch on YouTube
+          </a>
+          <button class="done-toggle ${watched?'watched':''}" onclick="toggleWatched('${r.id}',this)">
+            ${watched?'✓ Watched':'Mark watched'}
+          </button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function toggleWatched(id,btn){
+  state.watched[id]=!state.watched[id];
+  save();
+  btn.className='done-toggle '+(state.watched[id]?'watched':'');
+  btn.textContent=state.watched[id]?'✓ Watched':'Mark watched';
+  document.getElementById('ds-watched').textContent=watchedCount();
+  updateSidebar();
+}
+
+function renderNotes(){
+  const list=document.getElementById('notes-list');
+  list.innerHTML='';
+  if(!state.notes||state.notes.length===0){
+    list.innerHTML='<div class="empty-state">No notes yet. Write your first one above!</div>';return;
+  }
+  [...state.notes].reverse().forEach((n,ri)=>{
+    const i=state.notes.length-1-ri;
+    const c=document.createElement('div');c.className='saved-note-card';
+    c.innerHTML=`<div class="sn-header">
+      <span class="sn-date">${n.date}</span>
+      <button class="sn-del" onclick="deleteNote(${i})">✕ delete</button>
+    </div>
+    <div class="sn-body">${esc(n.text)}</div>`;
+    list.appendChild(c);
+  });
+}
+
+function saveNote(){
+  const txt=document.getElementById('note-input').value.trim();
+  if(!txt)return;
+  if(!state.notes)state.notes=[];
+  state.notes.push({text:txt,date:new Date().toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})});
+  save();
+  document.getElementById('note-input').value='';
+  renderNotes();
+}
+
+function deleteNote(i){if(confirm('Delete this note?')){state.notes.splice(i,1);save();renderNotes();}}
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function renderMotivation(){
+  const q=QUOTES[quoteIdx%QUOTES.length];
+  document.getElementById('q-text').textContent='"'+q.text+'"';
+  document.getElementById('q-author').textContent='— '+q.author;
+  const tg=document.getElementById('tips-grid');
+  if(tg.hasChildNodes())return;
+  TIPS.forEach(t=>{
+    const c=document.createElement('div');c.className='tip-card';
+    c.innerHTML=`<div class="tip-icon">${t.icon}</div><div class="tip-title">${t.title}</div><div class="tip-body">${t.body}</div>`;
+    tg.appendChild(c);
+  });
+}
+function nextQuote(){quoteIdx++;document.getElementById('q-text').textContent='"'+QUOTES[quoteIdx%QUOTES.length].text+'"';document.getElementById('q-author').textContent='— '+QUOTES[quoteIdx%QUOTES.length].author;}
+
+function goTo(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  const titles={dashboard:'Dashboard',schedule:'8-Week Schedule',resources:'YouTube Resources',notes:'My Notes',motivation:'Motivation'};
+  document.getElementById('topbar-title').textContent=titles[id]||id;
+  if(id==='dashboard')updateDashboard();
+  if(id==='schedule')renderSchedule();
+  if(id==='resources')renderResources();
+  if(id==='notes')renderNotes();
+  if(id==='motivation')renderMotivation();
+  closeSidebar();
+}
+
+function resetProgress(){
+  if(!confirm('Reset all schedule progress? This cannot be undone.'))return;
+  state.checked={};state.streak=0;state.lastActive=null;
+  save();renderSchedule();updateDashboard();updateSidebar();
+}
+
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
+
+function launchConfetti(){
+  const canvas=document.getElementById('confetti');
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const ctx=canvas.getContext('2d');
+  const cols=['#2d6a4f','#52b788','#a8ff78','#ffb347','#78c8ff','#ff78b4','#b478ff'];
+  const pieces=Array.from({length:100},()=>({x:Math.random()*canvas.width,y:-20,vx:(Math.random()-.5)*5,vy:Math.random()*5+2,col:cols[Math.floor(Math.random()*cols.length)],sz:Math.random()*8+4,rot:Math.random()*360,rv:(Math.random()-.5)*10}));
+  let f=0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.col;ctx.fillRect(-p.sz/2,-p.sz/2,p.sz,p.sz);ctx.restore();p.x+=p.vx;p.y+=p.vy;p.rot+=p.rv;p.vy+=.06;});
+    if(++f<140)requestAnimationFrame(draw);else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  draw();
+}
+
+load();
+updateDashboard();
+updateSidebar();
+renderMotivation();
+</script>
+</body>
+</html>
